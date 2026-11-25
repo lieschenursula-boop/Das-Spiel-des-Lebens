@@ -1,6 +1,6 @@
 # Das Spiel des Lebens
 
-Conways Spiel des Lebens mit unendlicher Welt zum Malen, Zufallsmustern, Weihnachts-Überraschung und einer Bibliothek mit über 700 Figuren.
+Conways Spiel des Lebens mit unendlicher Welt zum Malen, Zufallsmustern und einer Bibliothek mit über 700 Figuren.
 
 Spielen: https://lieschenursula-boop.github.io/Das-Spiel-des-Lebens/
 
