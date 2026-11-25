@@ -27,18 +27,9 @@ h1,h2,h3{font-family:var(--display);line-height:1.1;text-wrap:balance;margin:0}
 a{color:inherit}
 :focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:6px}
 
-.hero{position:relative;overflow:hidden;background:var(--paper);border-bottom:2px solid var(--line)}
-#life{position:absolute;inset:0;width:100%;height:100%;display:block}
-.hero .wrap{position:relative;padding-block:72px 64px;display:flex;flex-direction:column;gap:18px;align-items:flex-start}
-.hero h1{font-size:clamp(2.6rem,9vw,5.4rem);font-weight:700;letter-spacing:-.02em;background:var(--paper);padding:2px 12px 6px;margin-left:-12px;border-radius:10px}
-.hero h1 span{color:var(--life)}
-.claim{font-size:1.2rem;font-weight:600;background:var(--paper);padding:4px 12px;margin-left:-12px;border-radius:8px;max-width:30em}
-.ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
-.btn{font-family:var(--display);font-weight:600;font-size:1.15rem;text-decoration:none;padding:14px 26px;border-radius:14px;border:2px solid var(--ink);background:var(--card);color:var(--ink);display:inline-block}
-.btn.go{background:var(--life);border-color:var(--life);color:var(--life-ink)}
-.btn:hover{transform:translateY(-1px)}
 
-section{padding-block:56px 8px}
+section{padding-block:40px 8px}
+.btn{font-family:var(--display);font-weight:600;font-size:1.15rem;text-decoration:none;padding:14px 26px;border-radius:14px;border:2px solid var(--ink);background:var(--card);color:var(--ink);display:inline-block}
 .kicker{font-family:var(--display);font-weight:500;color:var(--life);font-size:1rem;margin-bottom:6px}
 h2{font-size:clamp(1.8rem,5vw,2.5rem);font-weight:600;margin-bottom:14px}
 .lead{max-width:62ch;background:var(--paper);margin:0 0 8px}
@@ -77,17 +68,6 @@ footer{font-size:.85rem;color:var(--soft);padding-block:0 40px}
 </head>
 <body>
 
-<header class="hero">
-  <canvas id="life" aria-hidden="true"></canvas>
-  <div class="wrap">
-    <h1>Das Spiel <span>des Lebens</span></h1>
-    <p class="claim">Vier einfache Regeln, unendlich viele Überraschungen. Male ein Muster und schau zu, was daraus wird.</p>
-    <div class="ctas">
-      <a class="btn go" href="spielen/">Jetzt spielen</a>
-      <a class="btn" href="#installieren">Aufs Handy holen</a>
-    </div>
-  </div>
-</header>
 
 <main class="wrap">
   <section id="was">
@@ -154,11 +134,6 @@ function paint(g,W,cs,ox,oy,on,ghost,m){const{w,h,a,age}=W;
 const GUN=[[24,0],[22,1],[24,1],[12,2],[13,2],[20,2],[21,2],[34,2],[35,2],[11,3],[15,3],[20,3],[21,3],[34,3],[35,3],[0,4],[1,4],[10,4],[16,4],[20,4],[21,4],[0,5],[1,5],[10,5],[14,5],[16,5],[17,5],[22,5],[24,5],[10,6],[16,6],[24,6],[11,7],[15,7],[12,8],[13,8]];
 const GLIDER=[[1,0],[2,1],[0,2],[1,2],[2,2]],LWSS=[[1,0],[4,0],[0,1],[0,2],[4,2],[0,3],[1,3],[2,3],[3,3]];
 
-// Bühne
-const hc=document.getElementById('life');let HG,HW,HH,HWorld,CS=12,hstale=0;
-function heroInit(){[HG,HW,HH]=fit(hc);HWorld=new World(Math.ceil(HW/CS),Math.ceil(HH/CS));HWorld.soup(.16);HWorld.put(GUN,Math.max(2,HWorld.w-40),2)}
-function heroDraw(){HG.clearRect(0,0,HW,HH);paint(HG,HWorld,CS,0,0,tok('--life'),tok('--ghost'),1.5)}
-heroInit();heroDraw();
 // Regel-Bilder: vorher → nachher
 const RULES=[[[1,0,0,0,1,0,0,0,0],0],[[1,0,0,0,1,0,0,0,1],1],[[1,0,1,0,1,0,1,0,1],0],[[1,0,1,0,0,0,0,1,0],1]];
 function drawRules(){document.querySelectorAll('[data-rule]').forEach(cv=>{const[g,w,h]=fit(cv);const[n,after]=RULES[+cv.dataset.rule];const cs=Math.floor(h/3);
@@ -186,16 +161,14 @@ demos.forEach(drawDemo);
 let last=0;
 function loop(t){
   if(t-last>110){last=t;
-    const ch=HWorld.step();hstale=ch<8?hstale+1:0;if(hstale>40){for(let i=0;i<HWorld.a.length;i++)if(Math.random()<.04)HWorld.a[i]=1;hstale=0}
-    heroDraw();
     for(const D of demos){D.t++;
       if(D.k==='xmas'){for(const f of D.flakes){f.y+=f.v*3;if(f.y>D.h){f.y=-3;f.x=Math.random()*D.w}}}
       else{D.W.step();if(D.k==='soup'&&D.t%160===0)D.W.soup(.3)}
       drawDemo(D)}}
   requestAnimationFrame(loop)}
 if(!RM)requestAnimationFrame(loop);
-addEventListener('resize',()=>{heroInit();heroDraw();drawRules();demos.forEach(D=>{[D.g,D.w,D.h]=fit(D.cv);drawDemo(D)})});
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{heroDraw();drawRules();demos.forEach(drawDemo)});
+addEventListener('resize',()=>{drawRules();demos.forEach(D=>{[D.g,D.w,D.h]=fit(D.cv);drawDemo(D)})});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{drawRules();demos.forEach(drawDemo)});
 // Link kopieren
 document.getElementById('copy').addEventListener('click',e=>{const t=document.getElementById('appurl').textContent;
   const done=()=>{e.target.textContent='Kopiert';setTimeout(()=>e.target.textContent='Kopieren',1600)};
