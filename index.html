@@ -48,6 +48,20 @@ button.on{border-color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
 .lab{display:flex;align-items:center;gap:10px;margin:12px 0 2px;color:var(--soft)}
 .lab input{flex:1;accent-color:var(--accent)}
 .lab output{min-width:3.5em;text-align:right;color:var(--ink);font-weight:500}
+.tempo{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:12px 14px 10px;margin-top:10px}
+.tempo .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.tempo .top span{font-weight:500}
+.tempo output{background:var(--accent);color:#fff;border-radius:999px;padding:3px 12px;font-weight:600;font-size:.95rem;min-width:7.5em;text-align:center}
+.tempo .rail{display:flex;align-items:center;gap:10px}
+.tempo .ico{font-size:1.35rem;line-height:1}
+#speed{-webkit-appearance:none;appearance:none;flex:1;height:12px;border-radius:999px;margin:0;cursor:pointer;
+  background:linear-gradient(90deg,var(--accent) 0 var(--p,33%),var(--chip) var(--p,33%) 100%)}
+#speed::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:30px;height:30px;border-radius:50%;background:var(--card);border:4px solid var(--accent);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+#speed::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--card);border:4px solid var(--accent);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+#speed::-moz-range-track{background:transparent}
+.tempo .ticks{display:flex;justify-content:space-between;padding:6px 44px 0 45px}
+.tempo .ticks i{width:6px;height:6px;border-radius:50%;background:var(--line)}
+.tempo .ticks i.on{background:var(--accent)}
 h2{font-size:1.2rem;font-weight:600;margin:22px 0 4px}
 .panel{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:10px}
 .small{color:var(--soft);font-size:.9rem;margin:4px 0}
@@ -111,7 +125,11 @@ details.glossar p{margin:8px 0;line-height:1.5}
       <button id="step">1 Schritt</button>
       <button id="clear">Leeren</button>
     </div>
-    <label class="lab">Tempo <input id="speed" type="range" min="1" max="7" value="3"><output id="speedO">10/s</output></label>
+    <div class="tempo">
+      <div class="top"><span>Tempo</span><output id="speedO">10 Runden/s</output></div>
+      <div class="rail"><span class="ico" aria-hidden="true">🐌</span><input id="speed" type="range" min="1" max="7" value="3" aria-label="Tempo"><span class="ico" aria-hidden="true">🚀</span></div>
+      <div class="ticks" id="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
 
 
     <h2>Zufallsmuster</h2>
@@ -250,7 +268,9 @@ function setRun(v){running=v;play.textContent=v?'Pause':'Start'}
 play.onclick=()=>setRun(!running);
 document.getElementById('step').onclick=()=>{live=lifeStep(live);gen++};
 document.getElementById('clear').onclick=()=>{live=new Set();gen=0;setRun(false)};
-const sp=document.getElementById('speed');sp.oninput=()=>document.getElementById('speedO').textContent=SPEEDS[sp.value-1][1];
+const sp=document.getElementById('speed');
+function showSpeed(){const v=+sp.value;sp.style.setProperty('--p',((v-1)/6*100)+'%');const t=SPEEDS[v-1];document.getElementById('speedO').textContent=t[0]?t[0]+' Runden/s':'🚀 Turbo';document.querySelectorAll('#ticks i').forEach((e,i)=>e.classList.toggle('on',i<v))}
+sp.oninput=showSpeed;showSpeed();
 function pick(id){const g=document.getElementById(id);g.querySelectorAll('button').forEach(b=>b.onclick=()=>{g.querySelectorAll('button').forEach(o=>o.classList.toggle('on',o===b))})}
 pick('rSize');pick('rSym');
 const dens=document.getElementById('dens');dens.oninput=()=>document.getElementById('densO').textContent=dens.value+' %';
