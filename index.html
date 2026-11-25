@@ -126,7 +126,7 @@ details.glossar p{margin:8px 0;line-height:1.5}
       <button id="clear">Leeren</button>
     </div>
     <div class="tempo">
-      <div class="top"><span>Tempo</span><output id="speedO">10 Runden/s</output></div>
+      <div class="top"><span>Tempo</span></div>
       <div class="rail"><span class="ico">Langsam</span><input id="speed" type="range" min="1" max="7" value="3" aria-label="Tempo"><span class="ico">Schnell</span></div>
       <div class="ticks" id="ticks" aria-hidden="true" style="margin-left:var(--tl,0);margin-right:var(--tr,0)"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     </div>
@@ -142,7 +142,6 @@ details.glossar p{margin:8px 0;line-height:1.5}
       <div class="row r3" id="rSym">
         <button data-v="0" class="on">Wild</button><button data-v="1">Gespiegelt</button><button data-v="2">Kaleidoskop</button>
       </div>
-      <label class="lab">Dichte <input id="dens" type="range" min="10" max="60" value="35"><output id="densO">35 %</output></label>
       <button class="main" id="rand" style="width:100%;margin-top:10px">🎲 Neues Zufallsmuster</button>
     </div>
   </section>
@@ -269,15 +268,14 @@ play.onclick=()=>setRun(!running);
 document.getElementById('step').onclick=()=>{live=lifeStep(live);gen++};
 document.getElementById('clear').onclick=()=>{live=new Set();gen=0;setRun(false)};
 const sp=document.getElementById('speed');
-function showSpeed(){const v=+sp.value;sp.style.setProperty('--p',((v-1)/6*100)+'%');const t=SPEEDS[v-1];document.getElementById('speedO').textContent=t[0]?t[0]+' Runden/s':'Turbo';document.querySelectorAll('#ticks i').forEach((e,i)=>e.classList.toggle('on',i<v))}
+function showSpeed(){const v=+sp.value;sp.style.setProperty('--p',((v-1)/6*100)+'%');const t=SPEEDS[v-1];document.querySelectorAll('#ticks i').forEach((e,i)=>e.classList.toggle('on',i<v))}
 sp.oninput=showSpeed;showSpeed();
 function tickPos(){const r=sp.getBoundingClientRect(),q=sp.parentElement.getBoundingClientRect();const t=document.getElementById('ticks');if(!r.width)return;t.style.marginLeft=(r.left-q.left+12)+'px';t.style.marginRight=(q.right-r.right+12)+'px'}
 addEventListener('resize',tickPos);setTimeout(tickPos,50);
 function pick(id){const g=document.getElementById(id);g.querySelectorAll('button').forEach(b=>b.onclick=()=>{g.querySelectorAll('button').forEach(o=>o.classList.toggle('on',o===b))})}
 pick('rSize');pick('rSym');
-const dens=document.getElementById('dens');dens.oninput=()=>document.getElementById('densO').textContent=dens.value+' %';
 document.getElementById('rand').onclick=()=>{
-  const n=+document.querySelector('#rSize .on').dataset.v,sym=+document.querySelector('#rSym .on').dataset.v,d=dens.value/100;
+  const n=+document.querySelector('#rSize .on').dataset.v,sym=+document.querySelector('#rSym .on').dataset.v,d=0.35;
   live=new Set();gen=0;const h=Math.floor(n/2);
   const put=(a,b)=>live.add(key(a-h,b-h));
   if(sym===0){for(let b=0;b<n;b++)for(let a=0;a<n;a++)if(Math.random()<d)put(a,b)}
